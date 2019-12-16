@@ -10,6 +10,7 @@ get('/') do
 end
 
 get('/albums') do
+   binding.pry
   @albums = Album.all
   erb(:albums)
 end
@@ -34,7 +35,8 @@ get('/albums/new') do
 end
 
 get('/albums/:id') do
-  "This route will show a specific album based on its ID. The value of ID here is #{params[:id]}."
+  @album = Album.find(params[:id].to_i())
+  erb(:album)
 end
 #
 # post('/albums') do
@@ -42,15 +44,24 @@ end
 # end
 
 get('/albums/:id/edit') do
-  "This will take us to a page with a form for updating an album with an ID of #{params[:id]}."
+  @album = Album.find(params[:id].to_i())
+  erb(:edit_album)
 end
 
 patch('/albums/:id') do
-  "This route will update an album. We can't reach it with a URL. In a future lesson, we will use a form that specifies a PATCH action to reach this route."
+  @album = Album.find(params[:id].to_i())
+  @album.update(params[:name])
+  @albums = Album.all
+  erb(:albums)
 end
 
 delete('/albums/:id') do
-  "This route will delete an album. We can't reach it with a URL. In a future lesson, we will use a delete button that specifies a DELETE action to reach this route."
+  delete('/albums/:id') do
+    @album = Album.find(params[:id].to_i())
+    @album.delete()
+    @albums = Album.all
+    erb(:albums)
+  end
 end
 
 get('/custom_route') do
@@ -58,5 +69,9 @@ get('/custom_route') do
 end
 
 post('/albums') do
-  binding.pry
+  name = params[:album_name]
+  album = Album.new(name, nil)
+  album.save()
+  @albums = Album.all() # Adding this line will fix the error.
+  erb(:albums)
 end
